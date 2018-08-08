@@ -1,0 +1,13 @@
+<% include ./partials/header.ejs %>
+<% include ./partials/header %>
+<div class = "ui main text container segment">
+    <div class = "ui huge header"><%= blog.title %></div>
+
+    <div>
+        <img src = "<%= blog.image %>"></img>
+        <p><%= blog.body %></p>
+        <p><%= blog.created %></p>
+    </div>
+</div>
+
+<% include ./partials/footer.ejs %>
