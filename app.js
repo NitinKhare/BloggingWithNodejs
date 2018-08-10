@@ -1,6 +1,7 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
+var expressSanitizer = require('express-sanitizer');
 var methodOverride = require('method-override');
 var app = express();
 var port = 3000;
@@ -9,6 +10,7 @@ app.set("view engine","ejs");
 
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({extended : true}));
+app.use(expressSanitizer());
 app.use(methodOverride("_method"));
 
 const options = {
@@ -59,6 +61,7 @@ app.get("/blogs/new", function(req, res){
 });
 
 app.post("/blogs",function(req, res){
+    req.body.blog.body = req.sanitize(req.body.blog.body);
     blog.create(req.body.blog, function(err, Blog){
         if(err){
             console.log(err);
@@ -97,6 +100,7 @@ app.get("/blogs/:id/edit", function(req, res){
 });
 
 app.put("/blogs/:id", function(req, res){
+    req.body.blog.body = req.sanitize(req.body.blog.body);
     blog.findByIdAndUpdate(req.params.id, req.body.blog,function(err, updatedBlog){
         if(err){
             console.log("Error", err);
