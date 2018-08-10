@@ -15,6 +15,9 @@
         </div>
         <a href = "/blogs/<%= blog._id %>/edit">Edit</a>
     </div>
+    <form method = "POST" action = "/blogs/<%= blog._id %>?_method=DELETE">
+        <button class = "ui red basic button">DELETE</button>
+    </form>
 </div>
 
 <% include ./partials/footer.ejs %>

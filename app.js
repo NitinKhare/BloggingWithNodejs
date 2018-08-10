@@ -107,6 +107,17 @@ app.put("/blogs/:id", function(req, res){
     });
 });
 
+app.delete("/blogs/:id", function(req, res){
+    blog.findByIdAndRemove(req.params.id, function(err){
+        if(err){
+            console.log("An error occurred", err);
+            res.redirect("/");
+        }else{
+            res.redirect("/");
+        }
+    });
+});
+
 app.listen(port , function(){
     console.log("The server started on port"+port);
 });
