@@ -1,6 +1,7 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
+var methodOverride = require('method-override');
 var app = express();
 var port = 3000;
 
@@ -8,6 +9,7 @@ app.set("view engine","ejs");
 
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({extended : true}));
+app.use(methodOverride("_method"));
 
 const options = {
     useNewUrlParser: true,
@@ -82,7 +84,28 @@ app.get("/blogs/:id", function(req, res){
     });
 });
 
+app.get("/blogs/:id/edit", function(req, res){
+    blog.findById(req.params.id, function(err, foundblog) {
+        if(err){
+            console.log("Error Occurred");
+            console.log(err);
+            res.redirect("/");
+        }else{
+            res.render("edit",{blog: foundblog});
+        }
+    });
+});
 
+app.put("/blogs/:id", function(req, res){
+    blog.findByIdAndUpdate(req.params.id, req.body.blog,function(err, updatedBlog){
+        if(err){
+            console.log("Error", err);
+            res.redirect("/");
+        }else{
+            res.redirect("/blogs/"+req.params.id);
+        }
+    });
+});
 
 app.listen(port , function(){
     console.log("The server started on port"+port);
