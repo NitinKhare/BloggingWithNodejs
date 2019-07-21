@@ -10,6 +10,7 @@ var port = 3000;
 var bcrypt = require('bcryptjs');
 var blog = require('./models/blog');
 var User = require('./models/user');
+var isLoggedIn = require('./config/isLoggedIn').isLoggedIn;
 
 const { check, validationResult } = require('express-validator');
 app.set("view engine","ejs");
@@ -141,11 +142,11 @@ app.get("/blogs",function(req, res){
     });
 });
 
-app.get("/blogs/new", function(req, res){
+app.get("/blogs/new", isLoggedIn, function(req, res){
     res.render("new");
 });
 
-app.post("/blogs",function(req, res){
+app.post("/blogs",isLoggedIn, function(req, res){
     req.body.blog.body = req.sanitize(req.body.blog.body);
     blog.create(req.body.blog, function(err, Blog){
         if(err){
@@ -172,7 +173,7 @@ app.get("/blogs/:id", function(req, res){
     });
 });
 
-app.get("/blogs/:id/edit", function(req, res){
+app.get("/blogs/:id/edit", isLoggedIn, function(req, res){
     blog.findById(req.params.id, function(err, foundblog) {
         if(err){
             console.log("Error Occurred");
@@ -184,7 +185,7 @@ app.get("/blogs/:id/edit", function(req, res){
     });
 });
 
-app.put("/blogs/:id", function(req, res){
+app.put("/blogs/:id", isLoggedIn,function(req, res){
     req.body.blog.body = req.sanitize(req.body.blog.body);
     blog.findByIdAndUpdate(req.params.id, req.body.blog,function(err, updatedBlog){
         if(err){
@@ -196,7 +197,7 @@ app.put("/blogs/:id", function(req, res){
     });
 });
 
-app.delete("/blogs/:id", function(req, res){
+app.delete("/blogs/:id", isLoggedIn, function(req, res){
     blog.findByIdAndRemove(req.params.id, function(err){
         if(err){
             console.log("An error occurred", err);
