@@ -7,6 +7,7 @@ var passport = require('passport');
 var app = express();
 var session = require('express-session');
 var port = 3000;
+var bcrypt = require('bcryptjs');
 var blog = require('./models/blog');
 var User = require('./models/user');
 
@@ -23,6 +24,12 @@ app.use(session({
   saveUninitialized: true,
  // cookie: { secure: true }
 }))
+
+app.use(require('connect-flash')());
+    app.use(function (req, res, next) {
+    res.locals.messages = require('express-messages')(req, res);
+    next();
+  });
 
 require('./config/passport')(passport);
 app.use(passport.initialize());
@@ -55,7 +62,11 @@ app.get("/",function(req, res){
 });
 
 app.get("/user/login", function(req, res){
-    res.render("login");
+    if(res.locals.user){
+        res.redirect('/');
+    }else{
+    res.render('login');
+}
 });
 
 app.post("/user/login", function(req, res, next){
@@ -84,15 +95,29 @@ app.post("/user/register",(req, res)=>{
         password: password
     });
 
-    newUser.save( (err) => {
-        if(err){
-            console.log(err);
-            return res.render("register");
-        }else{
-            console.log("Created a User");
-            res.redirect("/");
-        }
+    // newUser.save( (err) => {
+    //     if(err){
+    //         console.log(err);
+    //         return res.render("register");
+    //     }else{
+    //         console.log("Created a User");
+    //         res.redirect("/");
+    //     }
         
+    // });
+    bcrypt.genSalt(10, function(err, salt){
+        bcrypt.hash(newUser.password, salt, function(err, hash){
+            if(err) console.log(err);
+            newUser.password = hash;
+            newUser.save(function(err){
+                if(err){
+                    console.log(err);
+                }else{
+                    req.flash('success','You are registered');
+                    res.redirect('/')
+                }
+            });
+        });
     });
     
 });
