@@ -3,45 +3,98 @@ var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 var expressSanitizer = require('express-sanitizer');
 var methodOverride = require('method-override');
+var passport = require('passport');
 var app = express();
+var session = require('express-session');
 var port = 3000;
+var blog = require('./models/blog');
+var User = require('./models/user');
 
+const { check, validationResult } = require('express-validator');
 app.set("view engine","ejs");
 
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({extended : true}));
+
+app.set('trust proxy', 1) // trust first proxy
+app.use(session({
+  secret: 'keyboard cat',
+  resave: true,
+  saveUninitialized: true,
+ // cookie: { secure: true }
+}))
+
+require('./config/passport')(passport);
+app.use(passport.initialize());
+app.use(passport.session());
+
 app.use(expressSanitizer());
 app.use(methodOverride("_method"));
+
+app.use((req, res, next) => {
+    res.locals.user = req.user;
+    next();
+});
 
 const options = {
     useNewUrlParser: true,
   };
 
 mongoose.connect('mongodb://127.0.0.1:27017/bloggingApp', options).then(()=>{
-    console.log("Connected");
+    console.log("Connected to mongoDB");
 })
 .catch((err)=>{
     console.log("Error",err);
     process.exit(1);
 });
 
-var blogSchema = new mongoose.Schema({
-    title : String,
-    image : String,
-    body  : String,
-    created : {type : Date, default:  Date.now}
-});
 
-var blog = mongoose.model("blog", blogSchema);
-
-// blog.create({
-//     title : "Test",
-//     image : "https://images.unsplash.com/photo-1533458504656-81a904b29a69?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=b888832a29d97d8eb911d207d29f7cf5&auto=format&fit=crop&w=500&q=60",
-//     body : "A test blog body description"
-// });
 
 app.get("/",function(req, res){
     res.redirect("/blogs");
+});
+
+app.get("/user/login", function(req, res){
+    res.render("login");
+});
+
+app.post("/user/login", function(req, res, next){
+    passport.authenticate('local',{
+        successRedirect: '/',
+        failureRedirect: '/user/login',
+        failureFlash: true
+    })(req, res, next);
+});
+
+app.get("/user/register", function(req, res){
+    res.render("register");
+});
+
+app.post("/user/register",(req, res)=>{
+
+    var name = req.body.name;
+    var email = req.body.email;
+    var username = req.body.username;
+    var password = req.body.password;
+    
+    var newUser = new User({
+        name:name,
+        email: email,
+        username: username,
+        password: password
+    });
+
+    newUser.save( (err) => {
+        if(err){
+            console.log(err);
+            return res.render("register");
+        }else{
+            console.log("Created a User");
+            res.redirect("/");
+        }
+        
+    });
+    
 });
 
 app.get("/blogs",function(req, res){

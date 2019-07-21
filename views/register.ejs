@@ -1,0 +1,35 @@
+    
+<% include ./partials/header.ejs %>
+
+
+
+<div class="ui one column stackable center aligned page grid">
+        <div class="column twelve wide">
+          <br>
+            <h1 class="center">Register</h1>      
+          <br>
+ <form method="POST" class="ui form" action="/user/register">
+
+    <div class="field">
+            <label>Name</label>
+            <input type="text" name="name" placeholder=" Enter Full Name">
+          </div>
+
+    <div class="field">
+      <label>Username</label>
+      <input type="text" name="username" placeholder=" Enter Desired Username">
+    </div>
+    <div class="field">
+            <label>E-mail</label>
+            <input type="email" name="email" placeholder=" Enter your E-mail address">
+          </div>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" name="password" placeholder="Password">
+    </div>
+
+    <button class="ui button" type="submit">Register</button>
+  </form>
+</div>
+</div>
+<% include ./partials/footer.ejs %>

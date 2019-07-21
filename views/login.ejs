@@ -1,0 +1,29 @@
+    
+<% include ./partials/header.ejs %>
+
+<div class="ui one column stackable center aligned page grid">
+        <div class="column twelve wide">
+            <h1>Login</h1>
+      
+     
+ <form method="POST" class="ui form" action="/user/login">
+
+    <div class="field">
+      <label>Username</label>
+      <input type="text" name="username" placeholder="Username">
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" name="password" placeholder="Password">
+    </div>
+    <div class="field">
+      <div class="ui checkbox">
+        <input type="checkbox" tabindex="0">
+        <label>I agree to the Terms and Conditions</label>
+      </div>
+    </div>
+    <button class="ui button" type="submit">Log-in</button>
+  </form>
+</div>
+</div>
+<% include ./partials/footer.ejs %>
