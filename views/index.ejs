@@ -9,7 +9,7 @@
             <img class = "ui centered image"src = "<%= blog.image %>"></img>
         </div>
         <div class = "description">
-            <p><%= blog.body.substring(0, 400) %></p>
+            <p><%- blog.body.substring(0, 400) %></p>
         </div>
         <a href = "/blogs/<%= blog._id %>">Read More</a>
         <br>

@@ -11,6 +11,7 @@ var bcrypt = require('bcryptjs');
 var blog = require('./models/blog');
 var User = require('./models/user');
 var isLoggedIn = require('./config/isLoggedIn').isLoggedIn;
+var Comment = require('./models/comments');
 
 const { check, validationResult } = require('express-validator');
 app.set("view engine","ejs");
@@ -147,7 +148,6 @@ app.get("/blogs/new", isLoggedIn, function(req, res){
 });
 
 app.post("/blogs",isLoggedIn, function(req, res){
-    req.body.blog.body = req.sanitize(req.body.blog.body);
     blog.create(req.body.blog, function(err, Blog){
         if(err){
             console.log(err);
@@ -161,8 +161,7 @@ app.post("/blogs",isLoggedIn, function(req, res){
 
 app.get("/blogs/:id", function(req, res){
     var id = req.params.id;
-    console.log(id);
-    blog.findById(id, function(err, foundblog) {
+    blog.findById(req.params.id).populate("comments").exec((err, foundblog) => {
         if(err){
             console.log("Error Occurred");
             console.log(err);
@@ -208,6 +207,29 @@ app.delete("/blogs/:id", isLoggedIn, function(req, res){
     });
 });
 
+
+app.post("/blogs/:id/comment", function(req, res){
+    var id = req.params.id;
+    blog.findById(id, function(err, post){
+        if(err){
+            console.log("An error occurred", err);
+            res.redirect("/blogs/"+id+"/comments");
+        }else{
+            var author = req.user.username;
+            var comment = req.body.comment;
+            Comment.create({ text: comment, author: author }, (err, comment) => {
+                if (err) {
+                    console.log(err)
+                } else {
+                    post.comments.push(comment);
+                    post.save();
+                    res.redirect("/blogs/" + blog._id);
+                }
+            });
+
+        }
+    });
+});
 app.listen(port , function(){
     console.log("The server started on port"+port);
 });

@@ -18,14 +18,66 @@
     <form method = "POST" action = "/blogs/<%= blog._id %>?_method=DELETE">
         <button class = "ui red basic button">DELETE</button>
     </form>
+    <% if(!user) {%>
+        <% var x = "disabled" %>
+        <h3>You need to be logged In to make a comment </h3>
+        <% } %>
+
+        
+<div class="ui comments">
+    <h3 class="ui dividing header">Comments</h3>
+    <% blog.comments.forEach(function(comment){ %>
+    <div class="comment">
+      <!-- <a class="avatar">
+        <img src="/images/avatar/small/matt.jpg">
+      </a> -->
+      <div class="content">
+        <a class="author"><%= comment.author %></a>
+        <% var dateString = comment.time %>
+        <% dateString = new Date(dateString).toUTCString(); %>
+        <% dateString = dateString.split(' ').slice(0, 4).join(' '); %>
+        <div class="metadata">
+          <span class="date"><%= dateString %></span>
+        </div>
+        <div class="text">
+         <%= comment.text %>
+        </div>
+      </div>
+    </div>
+    <% }); %>
+    <form action="/blogs/<%= blog._id%>/comment" method="POST" class="ui reply form">
+      <div class="field">
+        <textarea name="comment" id="" placeholder="Enter Your Comment" <%= x %>></textarea>
+      </div>
+      <div class="ui blue labeled submit icon button">
+        <i class="icon edit"></i> Add Reply
+      </div>
+    </form>
+  </div>
+
+
 </div>
 
+
+
+
+<style>
+textarea
+{
+  width:100%;
+}
+.textwrapper
+{
+  border:1px solid #999999;
+  margin:5px 0;
+  padding:3px;
+}
+</style>
 <% include ./partials/footer.ejs %>
 
 
 
 
 
-<% include ./partials/footer.ejs %>
 
 
