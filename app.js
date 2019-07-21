@@ -122,6 +122,13 @@ app.post("/user/register",(req, res)=>{
     
 });
 
+app.get("/user/logout", function(req, res){
+    req.session.destroy(function (err) {
+        
+        res.redirect('/');
+    });
+});
+
 app.get("/blogs",function(req, res){
     blog.find({}, function(err, blogs){
         if(err){

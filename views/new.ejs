@@ -13,10 +13,21 @@
     </div>
     <div class = "field">
         <label>Blog Content</label>
-        <textarea name = "blog[body]" placeholder = "Blog content"></textarea>
+        <!-- <textarea  name = "blog[body]" placeholder = "Blog content"></textarea> -->
+        <textarea id="froala-editor" name = "blog[body]" placeholder="Enter the contents here" required></textarea>
     </div>
+    
+
         <input class="positive ui button" type = "submit">
 
     </form>
+<!-- Include Editor style. -->
+<link href='https://cdn.jsdelivr.net/npm/froala-editor@3.0.3/css/froala_editor.pkgd.min.css' rel='stylesheet' type='text/css' />
+
+<!-- Include JS file. -->
+<script type='text/javascript' src='https://cdn.jsdelivr.net/npm/froala-editor@3.0.3/js/froala_editor.pkgd.min.js'></script>
+    <script>
+            new FroalaEditor('textarea#froala-editor')
+          </script>
 </div>
 <% include ./partials/footer %>
